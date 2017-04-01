@@ -1,8 +1,8 @@
 /*!
  * @file
- * @brief TODO: ${FILE}
+ * @brief Low power mode implementation for Kinetis MCUs.
  *
- * ...
+ * This library enables low power modes and configures wakeup.
  *
  * @author Matthias L. Jugel
  * @date   2017-04-01
