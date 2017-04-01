@@ -17,7 +17,7 @@ The code has been tested on a K82F on our [ubirch](https://ubirch.com) board.
 
 If not otherwise noted in the individual files, the code in this repository is
 
-__Copyright &copy; 2016 [ubirch](http://ubirch.com) GmbH, Author: Matthias L. Jugel, Niranjan Rao__
+__Copyright &copy; 2017 [ubirch](http://ubirch.com) GmbH, Author: Matthias L. Jugel, Niranjan Rao__
 
 ```
 Licensed under the Apache License, Version 2.0 (the "License");
