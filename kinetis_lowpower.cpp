@@ -47,33 +47,42 @@ void __klp_LLWU_IRQHandler(void) {
         LLWU_ClearExternalWakeupPinFlag(LLWU, LLWU_WAKEUP_PIN_IDX);
     } else {
         if (LLWU_GetInternalWakeupModuleFlag(LLWU, 5U)) {
+#ifdef DEVICE_RTC
             // RTC wakeup
             if (RTC_GetStatusFlags(RTC) & kRTC_AlarmFlag) {
                 RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
             }
+#endif
         }
     }
 
 }
 
+#ifdef DEVICE_RTC
 void __klp_RTC_IRQHandler(void) {
     if (RTC_GetStatusFlags(RTC) & kRTC_AlarmFlag) {
         RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
     }
 }
+#endif
 
 void powerDown() {
     // configure power down to lowest possible mode
     smc_power_mode_vlls_config_t vlls_config;
     vlls_config.enablePorDetectInVlls0 = true;
-    vlls_config.enableRam2InVlls2 = false;
+//    vlls_config.enableRam2InVlls2 = false;
     vlls_config.enableLpoClock = false;
 
     // power down
     vlls_config.subMode = kSMC_StopSub0;
+
+#if FSL_SMC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
     SMC_PreEnterStopModes();
+#endif
     SMC_SetPowerModeVlls(SMC, &vlls_config);
+#if FSL_SMC_DRIVER_VERSION >= MAKE_VERSION(2, 0, 3)
     SMC_PostExitStopModes();
+#endif
 }
 
 void powerDownWakeupOnPin() {
@@ -85,6 +94,7 @@ void powerDownWakeupOnPin() {
     powerDown();
 }
 
+#ifdef DEVICE_RTC
 void powerDownWakeupOnRtc(int seconds) {
     // enable the rtc, at least make sure it works
     rtc_init();
@@ -101,5 +111,6 @@ void powerDownWakeupOnRtc(int seconds) {
     RTC->TAR = RTC->TSR + seconds;
     powerDown();
 }
+#endif
 
 

@@ -1,21 +1,28 @@
 cmake_minimum_required(VERSION 3.5)
 set(CMAKE_BUILD_TYPE Debug)
-
+set(CMAKE_VERBOSE_MAKEFILE t)
 project(relay C CXX)
 
 # == MBED OS 5 settings ==
+#set(MCU MK82FN256VLL15)
+#set(TARGET K82F)
+#set(BOARD UBRIDGE)
+set(MCU MKL82Z128VLK7)
+set(TARGET KL82Z)
+set(BOARD USENSE)
+
 set(FEATURES netsocket)
 
 add_definitions(
         -DTOOLCHAIN_GCC
-        -DCPU_MK82FN256VLL15
-        -DTARGET_K82F
-        -DTARGET_UBIRCH1
+        -DCPU_${MCU}
+        -DTARGET_${TARGET}
+        -DTARGET_${BOARD}
         -DMBED_CONF_RTOS_PRESENT
         -DMBED_CONF_NSAPI_PRESENT
         -DMBED_CONF_EVENTS_PRESENT
         -D__MBED__
-        -DDEVICE_RTC
+#        -DDEVICE_RTC
         -DDEVICE_I2C
         -DDEVICE_SPI
         -DDEVICE_SERIAL
@@ -31,11 +38,11 @@ add_definitions(
 )
 
 set(MBED_OS
-        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K82F/TARGET_UBRIDGE
-        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K82F/device/TOOLCHAIN_GCC_ARM
-        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K82F/drivers
-        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K82F/device
-        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_K82F
+        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_${TARGET}/TARGET_${BOARD}
+        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_${TARGET}/device/TOOLCHAIN_GCC_ARM
+        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_${TARGET}/drivers
+        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_${TARGET}/device
+        mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_${TARGET}
         mbed-os/targets/TARGET_Freescale/TARGET_MCUXpresso_MCUS/api
         mbed-os/targets/TARGET_Freescale
         mbed-os/rtos/rtx/TARGET_CORTEX_M/TARGET_RTOS_M4_M7
@@ -72,3 +79,7 @@ include_directories(${MBED_OS})
 
 add_executable(lowpower main.cpp kinetis_lowpower.cpp)
 target_link_libraries(lowpower mbed-os)
+
+add_custom_target(compile ALL
+        COMMAND mbed compile --profile mbed-os/tools/profiles/debug.json
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
