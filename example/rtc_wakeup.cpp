@@ -1,6 +1,8 @@
 #include "mbed.h"
 #include "kinetis_lowpower.h"
 
+DigitalOut led(LED1);
+
 /**
  * Example how to power down the board and let it wake up again after a number
  * of seconds. The code will enable the LED when awake. The intervals are:

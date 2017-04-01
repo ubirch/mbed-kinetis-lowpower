@@ -28,10 +28,8 @@
 
 #include <fsl_llwu.h>
 #include <fsl_port.h>
-#include <fsl_rcm.h>
 #include <fsl_smc.h>
 #include <fsl_rtc.h>
-#include <cstdio>
 #include <rtc_api.h>
 
 #define LLWU_WAKEUP_PIN_IDX 7U /* LLWU_P7 */
@@ -63,12 +61,7 @@ void __klp_RTC_IRQHandler(void)
 }
 
 
-void powerDownWakeupOnPin() {
-    // setup the wakeup handler
-    NVIC_SetVector(LLWU_IRQn, (uint32_t) &__klp_LLWU_IRQHandler);
-    NVIC_EnableIRQ(LLWU_IRQn);
-    LLWU_SetExternalWakeupPinMode(LLWU, LLWU_WAKEUP_PIN_IDX, LLWU_WAKEUP_PIN_TYPE);
-
+void powerDown() {
     // configure power down to lowest possible mode
     smc_power_mode_vlls_config_t vlls_config;
     vlls_config.enablePorDetectInVlls0 = true;
@@ -80,6 +73,15 @@ void powerDownWakeupOnPin() {
     SMC_PreEnterStopModes();
     SMC_SetPowerModeVlls(SMC, &vlls_config);
     SMC_PostExitStopModes();
+}
+
+void powerDownWakeupOnPin() {
+    // setup the wakeup handler
+    NVIC_SetVector(LLWU_IRQn, (uint32_t) &__klp_LLWU_IRQHandler);
+    NVIC_EnableIRQ(LLWU_IRQn);
+    LLWU_SetExternalWakeupPinMode(LLWU, LLWU_WAKEUP_PIN_IDX, LLWU_WAKEUP_PIN_TYPE);
+    powerDown();
+
 }
 
 void powerDownWakeupOnRtc(int seconds) {
@@ -96,18 +98,7 @@ void powerDownWakeupOnRtc(int seconds) {
     LLWU_EnableInternalModuleInterruptWakup(LLWU, 5U, true);
 
     RTC->TAR = RTC->TSR + seconds;
-    
-    // configure power down to lowest possible mode
-    smc_power_mode_vlls_config_t vlls_config;
-    vlls_config.enablePorDetectInVlls0 = true;
-    vlls_config.enableRam2InVlls2 = false;
-    vlls_config.enableLpoClock = false;
-
-    // power down
-    vlls_config.subMode = kSMC_StopSub0;
-    SMC_PreEnterStopModes();
-    SMC_SetPowerModeVlls(SMC, &vlls_config);
-    SMC_PostExitStopModes();
+    powerDown();
 }
 
 
