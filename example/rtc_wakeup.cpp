@@ -18,6 +18,7 @@ int main(void) {
     wait(5);
     led = 0;
 
+    // power down and wake up in 10s
     powerDownWakeupOnRtc(10);
 
     // the control flow will never arrive here, as the low power enable can only be

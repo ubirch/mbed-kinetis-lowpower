@@ -40,26 +40,27 @@
 
 //!< LLWU Wakeup Handler
 void __klp_LLWU_IRQHandler(void) {
-    // external pin wakeup
     if (LLWU_GetExternalWakeupPinFlag(LLWU, LLWU_WAKEUP_PIN_IDX)) {
+        // external pin wakeup
         PORT_SetPinInterruptConfig(BOARD_WAKEUP_PORT, BOARD_WAKEUP_GPIO_PIN, kPORT_InterruptOrDMADisabled);
         PORT_ClearPinsInterruptFlags(BOARD_WAKEUP_PORT, (1U << BOARD_WAKEUP_GPIO_PIN));
         LLWU_ClearExternalWakeupPinFlag(LLWU, LLWU_WAKEUP_PIN_IDX);
+    } else {
+        if (LLWU_GetInternalWakeupModuleFlag(LLWU, 5U)) {
+            // RTC wakeup
+            if (RTC_GetStatusFlags(RTC) & kRTC_AlarmFlag) {
+                RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
+            }
+        }
     }
 
-    // RTC wakeup
+}
+
+void __klp_RTC_IRQHandler(void) {
     if (RTC_GetStatusFlags(RTC) & kRTC_AlarmFlag) {
         RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
     }
 }
-
-void __klp_RTC_IRQHandler(void)
-{
-    if (RTC_GetStatusFlags(RTC) & kRTC_AlarmFlag) {
-        RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
-    }
-}
-
 
 void powerDown() {
     // configure power down to lowest possible mode
@@ -80,14 +81,14 @@ void powerDownWakeupOnPin() {
     NVIC_SetVector(LLWU_IRQn, (uint32_t) &__klp_LLWU_IRQHandler);
     NVIC_EnableIRQ(LLWU_IRQn);
     LLWU_SetExternalWakeupPinMode(LLWU, LLWU_WAKEUP_PIN_IDX, LLWU_WAKEUP_PIN_TYPE);
-    powerDown();
 
+    powerDown();
 }
 
 void powerDownWakeupOnRtc(int seconds) {
     // enable the rtc, at least make sure it works
     rtc_init();
-    
+
     NVIC_SetVector(RTC_IRQn, (uint32_t) &__klp_RTC_IRQHandler);
     NVIC_EnableIRQ(RTC_IRQn);
     RTC_EnableInterrupts(RTC, kRTC_AlarmInterruptEnable);

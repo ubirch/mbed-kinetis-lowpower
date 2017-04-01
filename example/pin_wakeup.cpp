@@ -1,7 +1,10 @@
+#include <rtc_api.h>
 #include "mbed.h"
 #include "kinetis_lowpower.h"
 
-DigitalOut led(LED1);
+// TODO: this should be wrapped and moved into the low power config
+// the interrupt pin is needed to setup the gpio for triggering an interrupt
+InterruptIn wakeup(PTC3);
 
 /**
  * Example how to power down the board and let it wake up using a pin.
@@ -11,6 +14,8 @@ DigitalOut led(LED1);
  * connect pin PTC3 to GND to wake up again
  */
 int main(void) {
+    DigitalOut led(LED1);
+
     // print message on boot (w/ indication of wakeup)
     printf("WAKEUP TEST (%s)\r\n", isLowPowerWakeup() ? "low power wakeup" : "power on reset");
 
