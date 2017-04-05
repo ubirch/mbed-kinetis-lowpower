@@ -1,4 +1,3 @@
-#include <rtc_api.h>
 #include "mbed.h"
 #include "kinetis_lowpower.h"
 
@@ -28,10 +27,12 @@ int main(void) {
 
     // the control flow will never arrive here, as the low power enable can only be
     // left by a RESET
-    
+
     // if the LED blinks a lot, this didn't work
     while (1) {
-        led = !led;
-        wait_ms(10);
+        led = 1;
+        wait_ms(500);
+        led = 0;
+        wait_ms(500);
     }
 }

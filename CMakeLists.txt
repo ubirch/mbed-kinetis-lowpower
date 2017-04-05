@@ -30,8 +30,8 @@ add_definitions(
         -DDEVICE_INTERRUPTIN
         -DMBED_CONF_EVENTS_PRESENT=1
         -DMBED_CONF_RTOS_PRESENT=1
-        -DMBED_CONF_PLATFORM_STDIO_BAUD_RATE=115200
-        -DMBED_CONF_NSAPI_PRESENT=1
+        -DMBED_CONF_PLATFORM_STDIO_BAUD_RATE=9600
+#        -DMBED_CONF_NSAPI_PRESENT=1
         -DMBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE=115200
         -DMBED_CONF_PLATFORM_STDIO_FLUSH_AT_EXIT=0
         -DMBED_CONF_PLATFORM_STDIO_CONVERT_NEWLINES=0
@@ -81,5 +81,6 @@ add_executable(lowpower main.cpp kinetis_lowpower.cpp)
 target_link_libraries(lowpower mbed-os)
 
 add_custom_target(compile ALL
+        COMMAND mbed target ${BOARD}
         COMMAND mbed compile --profile mbed-os/tools/profiles/debug.json
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
