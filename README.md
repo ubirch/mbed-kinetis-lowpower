@@ -13,6 +13,15 @@ library functions and run your code. Examples are provided in the [example](exam
 
 The code has been tested on a K82F on our [ubirch](https://ubirch.com) board.
 
+## Testing
+
+Link the example into the project directory and compile:
+
+- `ln -sf example/pin_wakeup.cpp main.cpp`
+- `mbed target UBIRCH`
+- `mbed toolchain GCC_ARM`
+- `mbed compile`
+
 ## License
 
 If not otherwise noted in the individual files, the code in this repository is

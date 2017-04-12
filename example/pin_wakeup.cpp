@@ -3,14 +3,16 @@
 
 // TODO: this should be wrapped and moved into the low power config
 // the interrupt pin is needed to setup the gpio for triggering an interrupt
-InterruptIn wakeup(PTC3);
+InterruptIn wakeup(PTA4);
+DigitalOut modem(PTD7);
+DigitalOut rf(PTA18);
 
 /**
- * Example how to power down the board and let it wake up using a pin.
+ * Example how to power down the board and let it wake up using a pin (button).
  * The code will enable the LED when awake.
  *
- * 5s  - awake
- * connect pin PTC3 to GND to wake up again
+ * 30s  - awake, then sleep until button or pin is connected to GND
+ * connect pin PTA4 (the button) to GND to wake up again (simply press the button
  */
 int main(void) {
     DigitalOut led(LED1);
@@ -19,10 +21,14 @@ int main(void) {
     printf("WAKEUP TEST (%s)\r\n", isLowPowerWakeup() ? "low power wakeup" : "power on reset");
 
     led = 1;
-    wait(5);
+    wait(30);
     led = 0;
 
-    // wakes up on PTC3 connected to GND
+    // disable modem and rf module
+    modem = 0;
+    rf = 1;
+
+    // wakes up on PTA4 connected to GND
     powerDownWakeupOnPin();
 
     // the control flow will never arrive here, as the low power enable can only be

@@ -32,11 +32,11 @@
 #include <fsl_rtc.h>
 #include <rtc_api.h>
 
-#define LLWU_WAKEUP_PIN_IDX 7U /* LLWU_P7 */
+#define LLWU_WAKEUP_PIN_IDX 3U /* LLWU_P3 */
 #define LLWU_WAKEUP_PIN_TYPE kLLWU_ExternalPinFallingEdge
 
-#define BOARD_WAKEUP_PORT PORTC
-#define BOARD_WAKEUP_GPIO_PIN 3U
+#define BOARD_WAKEUP_PORT PORTA
+#define BOARD_WAKEUP_GPIO_PIN 4U
 
 //!< LLWU Wakeup Handler
 void __klp_LLWU_IRQHandler(void) {
